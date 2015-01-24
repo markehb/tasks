@@ -5,8 +5,7 @@ require 'database.class.php';
 require 'addTaskCategories.class.php';
 
 $dbConn = new database\database();
-$dbConn->connect();
 
-$addTaskCategory = new tasks\category\add\AddTaskCategory();
+$addTaskCategory = new tasks\category\add\AddTaskCategory($dbConn);
 $addTaskCategory->addCategoryForm();
 

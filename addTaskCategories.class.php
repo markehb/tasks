@@ -3,9 +3,14 @@
 namespace tasks\category\add;
 
 class AddTaskCategory {
+    protected $db;
     
-    public function __construct(){
+    public function __construct($db) {
         echo "<h2>Add a Task Category</h2>";
+        
+        $this->$db = $db;
+        
+        $db->connect();
     }
     
     public function addCategoryForm() {
