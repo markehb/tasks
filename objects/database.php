@@ -31,6 +31,11 @@ class Database {
         }
     }
     
+    /**
+     * For select statements
+     * @param type $freshQuery
+     * @return type
+     */
     public function databaseQuery($freshQuery) {
         
         $prepQuery = $freshQuery;
@@ -39,6 +44,26 @@ class Database {
         
         try {
             $dbResult = $this->db->query($this->query);
+            return $dbResult;
+        } catch(\PDOException $ex) {
+            echo "An Error occured: " . $ex->getMessage();
+        }
+        
+    }
+    
+    /**
+     * For insert, update and delete statements
+     * @param type $freshQuery
+     * @return type
+     */
+    public function databaseExec($freshQuery) {
+        
+        $prepQuery = $freshQuery;
+        $preppedQuery = $prepQuery;
+        $this->query = $preppedQuery;
+        
+        try {
+            $dbResult = $this->db->exec($this->query);
             return $dbResult;
         } catch(\PDOException $ex) {
             echo "An Error occured: " . $ex->getMessage();
