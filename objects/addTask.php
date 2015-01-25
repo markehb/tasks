@@ -13,6 +13,7 @@ class AddTask {
     private $taskCategoryOptions;
     private $taskPriorityOptions;
     private $taskStatusOptions;
+    private $query;
     
     public function __construct($db){
         
@@ -25,19 +26,23 @@ class AddTask {
         if(is_array($taskArray)) {
             $this->taskName = $taskArray['taskName'];
             $this->taskDescription = $taskArray['taskDesc'];
-            $this->taskCategoryId = cint($taskArray['taskCategoryId']);
-            $this->taskPriorityId = cint($taskArray['taskPriorityId']);
-            $this->taskStatusId = cint($taskArray['taskStatusId']);
+            $this->taskCategoryId = (int)$taskArray['taskCategoryId'];
+            $this->taskPriorityId = (int)$taskArray['taskPriorityId'];
+            $this->taskStatusId = (int)$taskArray['taskStatusId'];
             
-            die("ADD PARAMETERS TO THIS QUERY");
-            $freshQuery = "INSERT INTO tasks";
-            $freshQuery .= " (task_name, task_description, task_category_id, task_priority_id, task_status_id)";
-            $freshQuery .= " VALUES ('".$this->taskName."','".$this->taskDescription."','".$this->taskCategoryId."','".$this->taskPriorityId."','".$this->taskStatusId."');";
-            // above should be parameterised
+            $this->query = "INSERT INTO tasks";
+            $this->query .= " (task_name, task_description, task_category_id, task_priority_id, task_status_id)";
+            $this->query .= " VALUES (:name,:desc,:catid,:priorityid,:statusid);";
+            $this->db->query($this->query);
             
-            $this->db->databaseConnect();
-            $queryResult = $this->db->databaseExec($freshQuery);
-            var_dump($queryResult);
+            $this->db->bind(':name', $this->taskName);
+            $this->db->bind(':desc', $this->taskDescription);
+            $this->db->bind(':catid', $this->taskCategoryId);
+            $this->db->bind(':priorityid', $this->taskPriorityId);
+            $this->db->bind(':statusid', $this->taskStatusId);
+            
+            $this->db->execute();
+            //var_dump($queryResult);
             
         } else {
             die('An unexpected error has occured.');
@@ -46,17 +51,15 @@ class AddTask {
     }
     
     public function buildTaskFormSelects() {
-        
-        $this->db->databaseConnect();
             
-        $dbQuery = $this->db->databaseQuery("SELECT category_id, category_name FROM categories");        
-        $this->taskCategoryOptions = $dbQuery->fetchAll(\PDO::FETCH_ASSOC); // return the rows from the select query
+        $dbQuery = $this->db->query("SELECT category_id, category_name FROM categories");        
+        $this->taskCategoryOptions = $this->db->resultset();
         
-        $dbQuery = $this->db->databaseQuery("SELECT priority_id, priority_name FROM priorities");
-        $this->taskPriorityOptions = $dbQuery->fetchAll(\PDO::FETCH_ASSOC); // return the rows from the select query
+        $dbQuery = $this->db->query("SELECT priority_id, priority_name FROM priorities");
+        $this->taskPriorityOptions = $this->db->resultset();
         
-        $dbQuery = $this->db->databaseQuery("SELECT status_id, status_name FROM status");
-        $this->taskStatusOptions = $dbQuery->fetchAll(\PDO::FETCH_ASSOC); // return the rows from the select query
+        $dbQuery = $this->db->query("SELECT status_id, status_name FROM status");
+        $this->taskStatusOptions = $this->db->resultset();
         
     }
     

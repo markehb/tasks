@@ -33,7 +33,6 @@ class AddTaskCategory {
     public function addTaskCategoryToDb($categoryName) {
         
         $freshQuery = "INSERT INTO categories (category_name) VALUES ('".$categoryName."')";
-        $this->db->databaseConnect();
         $this->db->databaseQuery($freshQuery);
     }
     

@@ -12,17 +12,17 @@ class Database {
     const DB_NAME = 'tasks';
     const DB_USER = 'tasks';
     const DB_PASS = 'tasks';
-    private $db;
-    private $query;
     
-    public function databaseConnect() {
-        
-        echo "<h3>Attempt db connection</h3>";
+    private $db;
+    private $stmt;
+    
+    public function __construct() {
         
         try {
             $this->db = new \PDO('mysql:host='.self::DB_HOST.';dbname='.self::DB_NAME.';charset=utf8', self::DB_USER, self::DB_PASS);
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+            $this->db->setAttribute(\PDO::ATTR_PERSISTENT, true);
             echo "db connected";
         } catch(\PDOException $ex) {
             echo "An Error occured!"; //user friendly message
@@ -32,43 +32,57 @@ class Database {
     }
     
     /**
-     * For select statements
+     * For query statements
      * @param type $freshQuery
      * @return type
      */
-    public function databaseQuery($freshQuery) {
+    public function query($query) {
         
-        $prepQuery = $freshQuery;
-        $preppedQuery = $prepQuery;
-        $this->query = $preppedQuery;
+        $this->stmt = $query;
         
         try {
-            $dbResult = $this->db->query($this->query);
-            return $dbResult;
+            $this->stmt = $this->db->prepare($this->stmt);
         } catch(\PDOException $ex) {
             echo "An Error occured: " . $ex->getMessage();
         }
         
     }
     
-    /**
-     * For insert, update and delete statements
-     * @param type $freshQuery
-     * @return type
-     */
-    public function databaseExec($freshQuery) {
-        
-        $prepQuery = $freshQuery;
-        $preppedQuery = $prepQuery;
-        $this->query = $preppedQuery;
-        
-        try {
-            $dbResult = $this->db->exec($this->query);
-            return $dbResult;
-        } catch(\PDOException $ex) {
-            echo "An Error occured: " . $ex->getMessage();
+    public function bind($param, $value, $type = null){
+        if (is_null($type)) {
+            switch (true) {
+              case is_int($value):
+                $type = \PDO::PARAM_INT;
+                break;
+              case is_bool($value):
+                $type = \PDO::PARAM_BOOL;
+                break;
+              case is_null($value):
+                $type = \PDO::PARAM_NULL;
+                break;
+              default:
+                $type = \PDO::PARAM_STR;
+            }
         }
-        
+        $this->stmt->bindValue($param, $value, $type);
+    }
+    
+    public function execute(){
+        return $this->stmt->execute();
+    }
+    
+    public function resultset(){
+        $this->execute();
+        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
+    public function single(){
+        $this->execute();
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    public function rowCount(){
+        return $this->stmt->rowCount();
     }
     
 }

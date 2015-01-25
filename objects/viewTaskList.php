@@ -12,4 +12,11 @@ class ViewTaskList {
         
     }
     
+    public function listTasks() {
+        
+        $query = $this->db->query("SELECT task_id, task_name FROM tasks ORDER BY task_priority_id DESC");
+        return $this->db->resultset();
+        
+    }
+    
 }

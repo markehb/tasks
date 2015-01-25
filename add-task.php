@@ -7,11 +7,11 @@ $addTask = new task\add\AddTask($dbConn);
 
 if ($_POST) {
 
-    $taskArray['taskName'] = 'Test Task Name';
-    $taskArray['taskDesc'] = 'Test Task Description';
-    $taskArray['taskCategoryId'] = 1;
-    $taskArray['taskPriorityId'] = 2;
-    $taskArray['taskStatusId'] = 3;
+    $taskArray['taskName'] = $_POST['taskName'];
+    $taskArray['taskDesc'] = $_POST['taskDesc'];
+    $taskArray['taskCategoryId'] = $_POST['taskCategory'];
+    $taskArray['taskPriorityId'] = $_POST['taskPriority'];
+    $taskArray['taskStatusId'] = $_POST['taskStatus'];
 
     $addTask->addTaskToDb($taskArray);
 
