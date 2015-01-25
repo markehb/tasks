@@ -2,7 +2,7 @@
 /* It's bootstrap time */
 
 require 'objects/database.class.php';
-require 'objects/addTaskCategories.class.php';
+require 'objects/addTaskCategory.php';
 
 $dbConn = new database\Database();
 

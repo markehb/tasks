@@ -1,16 +1,16 @@
 <?php
 
-require 'objects/database.php';
-require 'objects/viewTaskList.php';
-require 'objects/addTask.php';
+require 'objects/Database.php';
+require 'objects/ViewTaskList.php';
+require 'objects/TaskControls.php';
 
 include 'includes/header.php';
 
 $dbConn = new database\Database();
 $taskList = new task\viewList\ViewTaskList($dbConn);
-$addTask = new task\add\AddTask($dbConn);
+$controlTask = new task\add\TaskControls($dbConn);
 
-$addTask->buildTaskFormSelects(); // get the select options
+$controlTask->buildTaskFormSelects(); // get the select options
 
 // handle task adding
 if ($_POST) {
@@ -21,16 +21,32 @@ if ($_POST) {
     $taskArray['taskPriorityId'] = $_POST['taskPriority'];
     $taskArray['taskStatusId'] = $_POST['taskStatus'];
 
-    $addTask->addTaskToDb($taskArray);
+    $controlTask->addTaskToDb($taskArray);
     
     //success message
-    echo '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Success!</strong> Your has been added.</div>';
-
+    $successMessage = 'Task has been added.';
+    
+} elseif(isset($_GET['del'])) {
+    
+    $taskId = (int)filter_input(INPUT_GET, 'del', FILTER_SANITIZE_NUMBER_INT);
+    
+    try {
+        $controlTask->deleteTask($taskId);
+        $successMessage = 'Task has been deleted.';
+    } catch(Exception $e) {
+        $errorMessage = $e->getMessage();
+    }
 }
-?>
+
+// Error and success notices
+if(isset($errorMessage)) {
+    echo '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Error..</strong> '.$errorMessage.'</div>';
+    
+} elseif(isset($successMessage)) {
+    echo '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Success!</strong> '.$successMessage.'</div>';
+}
 
 
-<?php
 // show list of open tasks
 $tasksOpen = $taskList->listTasks('open');
 echo '<h1>Open Tasks</h1><table class="table table-striped table-bordered table-hover">'."\n<tbody>\n";
@@ -40,17 +56,17 @@ foreach ($tasksOpen as $task) {
     echo "<td>".$task['category_name'] . "</td>\n";
     echo "<td>".$task['priority_name'] . "</td>\n";
     echo "<td>".$task['status_name'] . "</td>\n";
-    echo '<td><a href="'.$task['task_id'].'">close</a></td>'."\n";
-    echo '<td><a href="'.$task['task_id'].'">edit</a></td>'."\n";
-    echo '<td><a href="'.$task['task_id'].'">delete</a></td></tr>'."\n";
-    echo '<tr><td colspan="7">Description: '.$task['task_description'].'</td></tr>'."\n";
+    echo '<td><a href="?close='.$task['task_id'].'" class="glyphicon glyphicon-copyright-mark"></a></td>'."\n";
+    echo '<td><a href="'.$task['task_id'].'" class="glyphicon glyphicon-pencil"></a></td>'."\n";
+    echo '<td><a href="?del='.$task['task_id'].'" class="glyphicon glyphicon-trash"></a></td></tr>'."\n";
+    echo '<tr><td colspan="7"><small>Description: '.$task['task_description'].'</small></td></tr>'."\n";
 }
 echo '<form action="index.php" method="post">';
 echo '<tr><td><div class="controls"><input id="taskName" name="taskName" placeholder="Enter task name" class="input-xlarge" required="" type="text"></div></td>';
 echo '<td><div class="controls"><select id="taskCategory" name="taskCategory" class="input-xlarge">';
 
 echo '<option> - Select task category - </option>';
-$categoryOptions = $addTask->getTaskCategoryOptions();
+$categoryOptions = $controlTask->getTaskCategoryOptions();
 foreach($categoryOptions As $categoryOption){
     echo '<option value="'.$categoryOption['category_id'].'">'.$categoryOption['category_name'].'</option>';
 }
@@ -58,7 +74,7 @@ echo '</select></div></td>';
 
 echo '<td><div class="controls"><select id="taskPriority" name="taskPriority" class="input-xlarge">';
 echo '<option> - Select task priority - </option>';
-$priorityOptions = $addTask->getTaskPriorityOptions();
+$priorityOptions = $controlTask->getTaskPriorityOptions();
 foreach($priorityOptions As $priorityOption){
     echo '<option value="'.$priorityOption['priority_id'].'">'.$priorityOption['priority_name'].'</option>';
 }
@@ -66,7 +82,7 @@ echo '</select></div></td>';
 
 echo '<td><div class="controls"><select id="taskStatus" name="taskStatus" class="input-xlarge">';
 echo '<option> - Select task status - </option>';
-$statusOptions = $addTask->getTaskStatusOptions();
+$statusOptions = $controlTask->getTaskStatusOptions();
 foreach($statusOptions As $statusOption){
     echo '<option value="'.$statusOption['status_id'].'">'.$statusOption['status_name'].'</option>';
 }
