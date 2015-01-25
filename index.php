@@ -52,14 +52,35 @@ $tasksOpen = $taskList->listTasks('open');
 echo '<h1>Open Tasks</h1><table class="table table-striped table-bordered table-hover">'."\n<tbody>\n";
 echo "<th>Name</th><th>Category</th><th>Priority</th><th>Status</th>";
 foreach ($tasksOpen as $task) {
-    echo "<tr><td>".$task['task_name'] . "</td>\n";
-    echo "<td>".$task['category_name'] . "</td>\n";
-    echo "<td>".$task['priority_name'] . "</td>\n";
-    echo "<td>".$task['status_name'] . "</td>\n";
-    echo '<td><a href="?close='.$task['task_id'].'" class="glyphicon glyphicon-copyright-mark"></a></td>'."\n";
-    echo '<td><a href="'.$task['task_id'].'" class="glyphicon glyphicon-pencil"></a></td>'."\n";
-    echo '<td><a href="?del='.$task['task_id'].'" class="glyphicon glyphicon-trash"></a></td></tr>'."\n";
-    echo '<tr><td colspan="7"><small>Description: '.$task['task_description'].'</small></td></tr>'."\n";
+    
+    $editThisRow = false;
+    
+    if(isset($_GET['edit'])) {
+        
+        if((int)filter_input(INPUT_GET, 'edit', FILTER_SANITIZE_NUMBER_INT) == $task['task_id']) {
+            $editThisRow = true;
+        }
+    }
+    
+    if($editThisRow === true) {
+        echo '<tr><td><input type="text" name="taskName" value="'.$task['task_name'] . '" /></td>'."\n";
+        echo "<td>".$task['category_name'] . "</td>\n";
+        echo "<td>".$task['priority_name'] . "</td>\n";
+        echo "<td>".$task['status_name'] . "</td>\n";
+        echo '<td><a href="?close='.$task['task_id'].'" class="glyphicon glyphicon-copyright-mark"></a></td>'."\n";
+        echo '<td>editing row</td>'."\n";
+        echo '<td><a href="?del='.$task['task_id'].'" class="glyphicon glyphicon-trash"></a></td></tr>'."\n";
+        echo '<tr><td colspan="7"><small>Description: '.$task['task_description'].'</small></td></tr>'."\n";
+    } else {
+        echo "<tr><td>".$task['task_name'] . "</td>\n";
+        echo "<td>".$task['category_name'] . "</td>\n";
+        echo "<td>".$task['priority_name'] . "</td>\n";
+        echo "<td>".$task['status_name'] . "</td>\n";
+        echo '<td><a href="?close='.$task['task_id'].'" class="glyphicon glyphicon-copyright-mark"></a></td>'."\n";
+        echo '<td><a href="?edit='.$task['task_id'].'" class="glyphicon glyphicon-pencil"></a></td>'."\n";
+        echo '<td><a href="?del='.$task['task_id'].'" class="glyphicon glyphicon-trash"></a></td></tr>'."\n";
+        echo '<tr><td colspan="7"><small>Description: '.$task['task_description'].'</small></td></tr>'."\n";
+    }
 }
 echo '<form action="index.php" method="post">';
 echo '<tr><td><div class="controls"><input id="taskName" name="taskName" placeholder="Enter task name" class="input-xlarge" required="" type="text"></div></td>';
