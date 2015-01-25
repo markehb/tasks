@@ -16,7 +16,6 @@ class AddTask {
     private $query;
     
     public function __construct($db){
-        
         $this->db = $db;
         
     }
@@ -51,7 +50,7 @@ class AddTask {
     }
     
     public function buildTaskFormSelects() {
-            
+        
         $dbQuery = $this->db->query("SELECT category_id, category_name FROM categories");        
         $this->taskCategoryOptions = $this->db->resultset();
         

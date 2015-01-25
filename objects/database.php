@@ -23,7 +23,6 @@ class Database {
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
             $this->db->setAttribute(\PDO::ATTR_PERSISTENT, true);
-            echo "db connected";
         } catch(\PDOException $ex) {
             echo "An Error occured!"; //user friendly message
             //some_logging_function($ex->getMessage());

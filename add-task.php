@@ -2,6 +2,8 @@
 require 'objects/database.php';
 require 'objects/addTask.php';
 
+include 'includes/header.php';
+
 $dbConn = new database\Database();
 $addTask = new task\add\AddTask($dbConn);
 
@@ -24,23 +26,18 @@ if ($_POST) {
 <fieldset>
 
 <!-- Form Name -->
-<legend>Form Name</legend>
+<legend>Add A Task</legend>
 
 <!-- Text input-->
 <div class="control-group">
   <label class="control-label" for="taskName"></label>
-  <div class="controls">
-    <input id="taskName" name="taskName" placeholder="Enter task name" class="input-xlarge" required="" type="text">
-    
-  </div>
+  <div class="controls"><input id="taskName" name="taskName" placeholder="Enter task name" class="input-xlarge" required="" type="text"></div>
 </div>
 
 <!-- Textarea -->
 <div class="control-group">
   <label class="control-label" for="taskDesc"></label>
-  <div class="controls">                     
-    <textarea id="taskDesc" name="taskDesc">Enter task description</textarea>
-  </div>
+  <div class="controls"><textarea id="taskDesc" name="taskDesc" placeholder="Enter task description"></textarea></div>
 </div>
 
 <!-- Select Basic -->
@@ -94,9 +91,7 @@ if ($_POST) {
 <!-- Button -->
 <div class="control-group">
   <label class="control-label" for="addTask"></label>
-  <div class="controls">
-    <button id="addTask" name="addTask" class="btn btn-primary">Add Task</button>
-  </div>
+  <div class="controls"><button id="addTask" name="addTask" class="btn btn-primary">Add Task</button></div>
 </div>
 
 </fieldset>
@@ -104,3 +99,4 @@ if ($_POST) {
 
 <?php    
 }
+include 'includes/footer.php';
