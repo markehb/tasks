@@ -112,21 +112,21 @@ echo '<form name="add" id="add" action="index.php" method="post">';
 echo '<tr><td><div class="controls"><input id="taskName" name="taskName" placeholder="Enter task name" class="input-xlarge" required="" type="text"></div></td>';
 echo '<td><div class="controls"><select id="taskCategory" name="taskCategory" class="input-xlarge">';
 echo '<option> - Select task category - </option>';
-foreach($categoryOptions As $categoryOption){
+foreach($categoryOptions as $categoryOption) {
     echo '<option value="'.$categoryOption['category_id'].'">'.$categoryOption['category_name'].'</option>';
 }
 echo '</select></div></td>';
 
 echo '<td><div class="controls"><select id="taskPriority" name="taskPriority" class="input-xlarge">';
 echo '<option> - Select task priority - </option>';
-foreach($priorityOptions As $priorityOption){
+foreach($priorityOptions As $priorityOption) {
     echo '<option value="'.$priorityOption['priority_id'].'">'.$priorityOption['priority_name'].'</option>';
 }
 echo '</select></div></td>';
 
 echo '<td><div class="controls"><select id="taskStatus" name="taskStatus" class="input-xlarge">';
 echo '<option> - Select task status - </option>';
-foreach($statusOptions As $statusOption){
+foreach($statusOptions As $statusOption) {
     echo '<option value="'.$statusOption['status_id'].'">'.$statusOption['status_name'].'</option>';
 }
 echo '</select></div></td></tr>';
